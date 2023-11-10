@@ -37,15 +37,12 @@ class Balance extends Component {
         }    
     ];
     const balanceInterface = new ethers.Interface(abi);
-    const data = balanceInterface.encodeFunctionData("balanceOf", ["0x1D95908F5E69A412BAa8E167fF6813E3b3E9Ce47"]);
-    console.log("data: ", data);
-    const balance = await maticProvider.call({
-        data: data,
+    const balance = ethers.formatUnits((await maticProvider.call({
+        data: balanceInterface.encodeFunctionData("balanceOf", ["0x1D95908F5E69A412BAa8E167fF6813E3b3E9Ce47"]),
         to: token
-    })
-    const formattedUnits = ethers.formatUnits(balance, 18);
+    })), 18);
     console.log("balance", balance);
-    this.setState({ selectedAddress: accounts[0], balance : formattedUnits })
+    this.setState({ selectedAddress: accounts[0], balance : balance })
   }
 
   renderBalance() {
@@ -55,7 +52,7 @@ class Balance extends Component {
       )
     } else {
       return (
-        <p>balance :  {this.state.balance}</p>
+        <p>Token balance of {this.state.selectedAddress}:  {this.state.balance}</p>
       );
     }
   }
